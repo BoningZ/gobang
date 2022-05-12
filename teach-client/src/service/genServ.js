@@ -25,21 +25,14 @@ function getMenuList() {
     return generalRequest('/api/teach/getMenuList', null)
 }
 
-function getCourseList(data) {
-    return generalRequest('/api/teach/getCourseList', data)
-}
+
 function changePassword(data) {
     return generalRequest('/api/teach/changePassword', data)
 }
 function register(data){
     return generalRequest('/api/auth/signup',data)
 }
-function courseDelete(data) {
-    return generalRequest('/api/teach/courseDelete', data)
-}
-function getCourseInfo(data) {
-    return generalRequest('/api/teach/getCourseInfo', data)
-}
+
 function courseSubmit(data) {
     return generalRequest('/api/teach/courseSubmit', data)
 }
@@ -49,51 +42,32 @@ function getProfile(data){
 function submitProfile(data){
     return generalRequest('/api/teach/submitProfile',data);
 }
-function getSelectedList(data){
-    return generalRequest('api/select/getSelected',data);
+
+function getRoomList(data){
+    return generalRequest('/api/teach/getRoomList',data);
 }
-function unselect(data){
-    return generalRequest('api/select/unselect',data);
+
+function addRoom(data){
+    return generalRequest('/api/teach/addRoom',data);
 }
-function select(data){
-    return generalRequest('api/select/select',data);
+
+function joinRoom(data){
+    return generalRequest('/url/teach/joinRoom',data);
 }
-function getWeeklyTable(data){
-    return generalRequest('api/select/getWeekly',data);
-}
-function getStudentList(data){
-    return generalRequest('api/score/getStudents',data);
-}
-function getScoreList(data){
-    return generalRequest('api/score/getScores',data);
-}
-function getGPA(data){
-    return generalRequest('api/score/getGPA',data);
-}
-function submitScore(data){
-    return generalRequest('api/score/submitScore',data);
-}
+
 
 //  company
 
 
 export {
-    getScoreList,
-    getGPA,
-    getStudentList,
-    submitScore,
     samplePost,
     getMenuList,
-    getCourseList,
     changePassword,
     register,
-    courseDelete,
-    getCourseInfo,
     courseSubmit,
     getProfile,
     submitProfile,
-    getSelectedList,
-    select,
-    unselect,
-    getWeeklyTable,
+    getRoomList,
+    addRoom,
+    joinRoom
 }

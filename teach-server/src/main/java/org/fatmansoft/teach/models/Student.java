@@ -22,7 +22,8 @@ public class Student {
     @Size(max = 20)
     private String name;
 
-
+    @Override
+    public String toString() {return sid+" "+name;}
 
     public String getName() {
         return name;
