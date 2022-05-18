@@ -3,10 +3,10 @@
   <div>
     <el-tag class="ml-2" >我方棋子：{{isHost?"黑":"白"}}</el-tag>
     <el-tag class="ml-2" >房号：{{rid}}</el-tag>
-    <el-tag class="ml-2" type="success" :show="isBlack==isHost">我方行棋</el-tag>
-    <el-tag class="ml-2" type="error" :show="isBlack!=isHost">对方行棋</el-tag>
-    <el-tag class="ml-2" type="success" :show="win==1&&isHost||win==2&&!isHost">我方胜利</el-tag>
-    <el-tag class="ml-2" type="error" :show="win==2&&isHost||win==1&&!isHost">对方胜利</el-tag>
+    <el-tag class="ml-2" type="success" :show="isBlack===isHost">我方行棋</el-tag>
+    <el-tag class="ml-2" type="error" :show="isBlack!==isHost">对方行棋</el-tag>
+    <el-tag class="ml-2" type="success" :show="win===1&&isHost||win===2&&!isHost">我方胜利</el-tag>
+    <el-tag class="ml-2" type="error" :show="win===2&&isHost||win===1&&!isHost">对方胜利</el-tag>
   </div>
   <div class="gobang">
     <canvas id="gobang" width="800" height="600"></canvas>
@@ -24,6 +24,8 @@ export default {
       rid:"",
       chess:"",
       isHost:false,
+      isBlack:false,
+      win:0,
       ctx: null,
       winGame: false,
       whiteTurn: false, // 白棋轮；true-黑棋轮
@@ -64,22 +66,18 @@ export default {
       //接收到消息的回调方法
       let that = this;
       this.webSocket.onmessage = function (event) {
-        let user = eval("(" + event.data + ")")
-        // console.log("用户消息：" + event.data)
-        if (user.type === 0) {
-          // 提示连接成功
-          that.showInfo(user.people_num, user.aisle, user.people);
-        }
-        if (user.type === 1) {
-          //接受消息
-          // console.log("接受消息");
-          that.messageList.push(user);
-        }
-        if (user.type === 2) {
-          //显示消息
-          // console.log(user.name + "退出直播间")
-          that.showInfo(user.people_num, "", user.people);
-          that.messageList.push(user);
+        let infoList = eval("(" + event.data + ")")
+        if(infoList.type===1){
+          ElMessage({
+            showClose: true,
+            message: infoList.msg,
+            type: 'error',
+          })
+        }else {
+          this.chess = infoList.chess;
+          this.isBlack=infoList.isBlack;
+          this.win = infoList.win;
+          this.redraw();
         }
       };
 
@@ -95,6 +93,16 @@ export default {
     }
   },
   methods: {
+    redraw(){
+      var k=0;
+      for(var i=0;i<15;i++)
+        for(var j=0;j<15;j++){
+          if(this.chess.charAt(k)==='1')this.drawChess(i,j,true);
+          if(this.chess.charAt(k)==='2')this.drawChess(i,j,false);
+          k++;
+        }
+
+    },
     drawCheckerboard() {
       // 画棋盘
       let _this = this;
@@ -114,9 +122,8 @@ export default {
 
         _this.resultArr.push(new Array(15).fill(0));
       }
-      _this.drawText();
     },
-    drawChess(x, y) {
+    drawChess(x, y,isBlack) {
       let _this = this;
       let xLine = Math.round((x - 15) / 30); // 竖线第x条
       let yLine = Math.round((y - 15) / 30); // 横线第y条
@@ -131,8 +138,8 @@ export default {
           yLine * 30 + 15,
           10
       );
-      grd.addColorStop(0, _this.whiteTurn ? "#fff" : "#4c4c4c");
-      grd.addColorStop(1, _this.whiteTurn ? "#dadada" : "#000");
+      grd.addColorStop(0, !isBlack ? "#fff" : "#4c4c4c");
+      grd.addColorStop(1, !isBlack ? "#dadada" : "#000");
       _this.ctx.beginPath();
       _this.ctx.fillStyle = grd;
       _this.ctx.arc(
@@ -146,8 +153,7 @@ export default {
       _this.ctx.fill();
       _this.ctx.closePath();
 
-      _this.setResultArr(xLine, yLine);
-      _this.checkResult(xLine, yLine);
+
     },
 
 
@@ -161,12 +167,10 @@ export default {
         return;
       }
       this.drawChess(x, y);
-      if(this.winGame){
-        this.drawResult();
-        return;
-      }
-      this.whiteTurn = !this.whiteTurn;
-      this.drawText();
+      let socketMsg = {x: x,y:y};
+
+      // console.log(JSON.stringify(socketMsg))
+      this.webSocket.send(JSON.stringify(socketMsg));
     }
   }
 };
