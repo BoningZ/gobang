@@ -38,6 +38,12 @@ public class Room {
         chess=new String(sb);
     }
 
+    public boolean isBlack(){
+        int[] basket=new int[2];
+        for(int i=0;i<chess.length();i++)basket[chess.charAt(i)-'1']++;
+        return basket[0]<=basket[1];
+    }
+
 
     public int wins(){
         char[][] brd= new char[16][16];

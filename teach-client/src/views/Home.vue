@@ -20,47 +20,18 @@ import
         <el-button class="commButton" size="mini" @click="doQueryMy()">我参与的</el-button>
       </el-form-item>
     </el-form>
-    <el-table  class="table-content"
-               :data="dataList"
-               border
-               style="width: 100%;"
-               size="mini"
-               height="500"
-    >
-      <el-table-column
-          label="序号"
-          fixed="left"
-          width="50"
-          align="center"
-          color="black"
-      >
+    <el-table  class="table-content" :data="dataList" border style="width: 100%;" size="mini" height="500">
+
+      <el-table-column label="序号" fixed="left" width="50" align="center" color="black">
         <template v-slot="scope">
           {{ scope.$index+1 }}
         </template>
       </el-table-column><!--第一列-->
-      <el-table-column
-          label="房间号"
-          align="center"
-          color="black"
-          sortable
-          prop="rid" /><!--courseNum-->
-      <el-table-column
-          label="房主"
-          align="center"
-          color="black"
-          sortable
-          prop="host" /><!--courseName-->
-      <el-table-column
-          label="访客"
-          align="center"
-          color="black"
-          sortable
-          prop="guest" />
-      <el-table-column
-          label="操作"
-          align="center"
-          color="black"
-      >
+
+      <el-table-column label="房间号" align="center" color="black" sortable prop="rid" /><!--courseNum-->
+      <el-table-column label="房主" align="center" color="black" sortable prop="host" /><!--courseName-->
+      <el-table-column label="访客" align="center" color="black" sortable prop="guest" />
+      <el-table-column label="操作" align="center" color="black">
         <template v-slot="scope">
           <el-button type="text" size="mini" @click="doJoin(scope.row.rid)">进入</el-button>
         </template>
@@ -111,7 +82,7 @@ export default {
     },
     doJoin(rid) {
       joinRoom({'rid':rid}).then(res=>{
-        if(res.code==='0')this.$router.push({ path: 'CourseEdit', query: { 'rid':rid }})
+        if(res.code==='0')this.$router.push({ path: 'Room', query: { 'rid':rid ,'isHost':res.data.isHost}})
         else {
           this.$message({
             message: '加入失败，已自动刷新',

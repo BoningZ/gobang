@@ -13,9 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -79,10 +77,12 @@ public class HomeController {
         Student student=userRepository.findByUserId(id).get().getStudent();
         String rid=dataRequest.getString("rid");
         Room r=roomRepository.getById(Integer.valueOf(rid));
-        if(r.getHost().equals(student))return CommonMethod.getReturnMessageOK();
-        if(r.getGuest()==null){r.setGuest(student);roomRepository.save(r);return CommonMethod.getReturnMessageOK();}
+        Map m=new HashMap<>();
+        if(r.getHost().equals(student)){m.put("isHost",true);return CommonMethod.getReturnData(m);}
+        m.put("isHost",false);
+        if(r.getGuest()==null){r.setGuest(student);roomRepository.save(r);return CommonMethod.getReturnData(m);}
         if(!r.getGuest().equals(student))return CommonMethod.getReturnMessageError("");
-        return CommonMethod.getReturnMessageOK();
+        return CommonMethod.getReturnData(m);
     }
 
 }
