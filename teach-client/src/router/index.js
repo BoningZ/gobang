@@ -43,6 +43,11 @@ const routes = [
     name:'Register',
     component:() => import('@/views/Register.vue')
   },
+  {
+    path:'/StudentProfile',
+    name:'StudentProfile',
+    component:()=>import('@/views/dashboard/StudentProfile.vue')
+  }
 ]
 
 const router = createRouter({
