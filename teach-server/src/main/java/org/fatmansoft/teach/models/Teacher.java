@@ -1,9 +1,12 @@
 package org.fatmansoft.teach.models;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Proxy(lazy = false)
 @Entity
 @Table(	name = "teacher",
         uniqueConstraints = {

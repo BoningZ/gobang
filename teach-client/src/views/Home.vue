@@ -82,7 +82,7 @@ export default {
     },
     doJoin(rid) {
       joinRoom({'rid':rid}).then(res=>{
-        if(res.code==='0')this.$router.push({ path: 'Room', query: { 'rid':rid ,'isHost':res.data.isHost}})
+        if(res.code==='0')this.$router.push({ path: 'Room', query: { 'rid':rid ,'isHost':res.data.isHost,'userId':res.data.userId}})
         else {
           this.$message({
             message: '加入失败，已自动刷新',

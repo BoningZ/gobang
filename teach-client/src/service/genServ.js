@@ -52,7 +52,7 @@ function addRoom(data){
 }
 
 function joinRoom(data){
-    return generalRequest('/url/teach/joinRoom',data);
+    return generalRequest('/api/teach/joinRoom',data);
 }
 
 

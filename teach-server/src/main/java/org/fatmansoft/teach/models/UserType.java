@@ -1,7 +1,9 @@
 package org.fatmansoft.teach.models;
 
-import javax.persistence.*;
+import org.hibernate.annotations.Proxy;
 
+import javax.persistence.*;
+@Proxy(lazy = false)
 @Entity
 @Table(name = "user_type")
 public class UserType {

@@ -2,12 +2,15 @@ package org.fatmansoft.teach.models;
 
 
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+@Proxy(lazy = false)
 @Entity
 @Table(	name = "room",
         uniqueConstraints = {
@@ -38,10 +41,15 @@ public class Room {
         chess=new String(sb);
     }
 
+    public void setChess(int i,int j){
+        if(isBlack())setChess(i,j,1);
+        else setChess(i,j,2);
+    }
+
     public boolean isBlack(){
-        int[] basket=new int[2];
-        for(int i=0;i<chess.length();i++)basket[chess.charAt(i)-'1']++;
-        return basket[0]<=basket[1];
+        int[] basket=new int[3];
+        for(int i=0;i<chess.length();i++)basket[chess.charAt(i)-'0']++;
+        return basket[1]<=basket[2];
     }
 
 

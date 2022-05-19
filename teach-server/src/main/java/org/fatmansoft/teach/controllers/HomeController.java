@@ -78,6 +78,7 @@ public class HomeController {
         String rid=dataRequest.getString("rid");
         Room r=roomRepository.getById(Integer.valueOf(rid));
         Map m=new HashMap<>();
+        m.put("userId",id);
         if(r.getHost().equals(student)){m.put("isHost",true);return CommonMethod.getReturnData(m);}
         m.put("isHost",false);
         if(r.getGuest()==null){r.setGuest(student);roomRepository.save(r);return CommonMethod.getReturnData(m);}

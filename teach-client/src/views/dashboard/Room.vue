@@ -1,12 +1,12 @@
 <template>
   <Navi/>
   <div>
-    <el-tag class="ml-2" >ÎÒ·½Æå×Ó£º{{isHost?"ºÚ":"°×"}}</el-tag>
-    <el-tag class="ml-2" >·¿ºÅ£º{{rid}}</el-tag>
-    <el-tag class="ml-2" type="success" :show="isBlack===isHost">ÎÒ·½ĞĞÆå</el-tag>
-    <el-tag class="ml-2" type="error" :show="isBlack!==isHost">¶Ô·½ĞĞÆå</el-tag>
-    <el-tag class="ml-2" type="success" :show="win===1&&isHost||win===2&&!isHost">ÎÒ·½Ê¤Àû</el-tag>
-    <el-tag class="ml-2" type="error" :show="win===2&&isHost||win===1&&!isHost">¶Ô·½Ê¤Àû</el-tag>
+    <el-tag class="ml-2" >æˆ‘æ–¹æ£‹å­ï¼š{{isHost?"é»‘":"ç™½"}}</el-tag>
+    <el-tag class="ml-2" >æˆ¿å·ï¼š{{rid}}</el-tag>
+    <el-tag class="ml-2" type="success" v-show="isBlack===isHost">æˆ‘æ–¹è¡Œæ£‹</el-tag>
+    <el-tag class="ml-2" type="error" v-show="isBlack!==isHost">å¯¹æ–¹è¡Œæ£‹</el-tag>
+    <el-tag class="ml-2" type="success" v-show="win===1&&isHost||win===2&&!isHost">æˆ‘æ–¹èƒœåˆ©</el-tag>
+    <el-tag class="ml-2" type="error" v-show="((this.win===2&&this.isHost)||(this.win===1&&!this.isHost))&&false">å¯¹æ–¹èƒœåˆ©</el-tag>
   </div>
   <div class="gobang">
     <canvas id="gobang" width="800" height="600"></canvas>
@@ -28,9 +28,13 @@ export default {
       win:0,
       ctx: null,
       winGame: false,
-      whiteTurn: false, // °×ÆåÂÖ£»true-ºÚÆåÂÖ
-      resultArr: [] // ¼ÇÂ¼Æå×ÓÎ»ÖÃµÄÊı×é
+      whiteTurn: false, // ç™½æ£‹è½®ï¼›true-é»‘æ£‹è½®
+      resultArr: [] // è®°å½•æ£‹å­ä½ç½®çš„æ•°ç»„
     };
+  },
+  created() {
+    this.rid = this.$route.query.rid;
+    this.isHost=this.$route.query.isHost;
   },
   mounted() {
     let _this = this;
@@ -42,54 +46,56 @@ export default {
     _this.ctx.translate(70,70);
     _this.drawCheckerboard();
 
-    this.rid = this.$route.query.rid;
-    this.isHost=this.$route.query.isHost;
-    console.log("½¨Á¢Á¬½Ó")
+
+    console.log("å»ºç«‹è¿æ¥")
       if ("WebSocket" in window) {
-        this.webSocket = new WebSocket("ws://localhost:8080/room/" + this.rid)
+        this.webSocket = new WebSocket("ws://localhost:9090/room/" + this.rid)
       } else {
         ElMessage({
           showClose: true,
-          message: '²»Ö§³ÖsocketÁ¬½Ó£¡',
+          message: 'ä¸æ”¯æŒsocketè¿æ¥ï¼',
           type: 'warning',
         })
       }
-      //Á¬½Ó·¢Éú´íÎóµÄ»Øµ÷·½·¨
+      //è¿æ¥å‘ç”Ÿé”™è¯¯çš„å›è°ƒæ–¹æ³•
       this.webSocket.onerror = function () {
         ElMessage({
           showClose: true,
-          message: 'Á¬½ÓÊ§°Ü',
+          message: 'è¿æ¥å¤±è´¥',
           type: 'error',
         })
       }
 
-      //½ÓÊÕµ½ÏûÏ¢µÄ»Øµ÷·½·¨
+      //æ¥æ”¶åˆ°æ¶ˆæ¯çš„å›è°ƒæ–¹æ³•
       let that = this;
       this.webSocket.onmessage = function (event) {
         let infoList = eval("(" + event.data + ")")
-        if(infoList.type===1){
-          ElMessage({
-            showClose: true,
-            message: infoList.msg,
-            type: 'error',
-          })
-        }else {
-          this.chess = infoList.chess;
-          this.isBlack=infoList.isBlack;
-          this.win = infoList.win;
-          this.redraw();
+        if(infoList.room==that.rid) {
+
+          if (infoList.type === 1) {
+            ElMessage({
+              showClose: true,
+              message: infoList.msg,
+              type: 'error',
+            })
+          } else {
+            that.chess = infoList.chess;
+            that.isBlack = infoList.isBlack;
+            that.win = infoList.win;
+            that.redraw();
+          }
         }
       };
 
       this.webSocket.onclose = function (event) {
-        console.log("¹Ø±Õ£º" + event)
+        console.log("å…³é—­ï¼š" + event)
         that.webSocket.close()
       }
 
   },
   computed:{
     chessText(){
-      return this.whiteTurn ? '°×Æå' : 'ºÚÆå';
+      return this.whiteTurn ? 'ç™½æ£‹' : 'é»‘æ£‹';
     }
   },
   methods: {
@@ -104,7 +110,7 @@ export default {
 
     },
     drawCheckerboard() {
-      // »­ÆåÅÌ
+      // ç”»æ£‹ç›˜
       let _this = this;
       _this.ctx.beginPath();
       _this.ctx.fillStyle = "#fff";
@@ -113,10 +119,10 @@ export default {
       for (var i = 0; i < 15; i++) {
         _this.ctx.beginPath();
         _this.ctx.strokeStyle = "#D6D1D1";
-        _this.ctx.moveTo(15 + i * 30, 15); //´¹Ö±·½Ïò»­15¸ùÏß£¬Ïà¾à30px;
+        _this.ctx.moveTo(15 + i * 30, 15); //å‚ç›´æ–¹å‘ç”»15æ ¹çº¿ï¼Œç›¸è·30px;
         _this.ctx.lineTo(15 + i * 30, 435);
         _this.ctx.stroke();
-        _this.ctx.moveTo(15, 15 + i * 30); //Ë®Æ½·½Ïò»­15¸ùÏß£¬Ïà¾à30px;ÆåÅÌÎª14*14£»
+        _this.ctx.moveTo(15, 15 + i * 30); //æ°´å¹³æ–¹å‘ç”»15æ ¹çº¿ï¼Œç›¸è·30px;æ£‹ç›˜ä¸º14*14ï¼›
         _this.ctx.lineTo(435, 15 + i * 30);
         _this.ctx.stroke();
 
@@ -125,8 +131,8 @@ export default {
     },
     drawChess(x, y,isBlack) {
       let _this = this;
-      let xLine = Math.round((x - 15) / 30); // ÊúÏßµÚxÌõ
-      let yLine = Math.round((y - 15) / 30); // ºáÏßµÚyÌõ
+      let xLine = Math.round((x - 15) / 30); // ç«–çº¿ç¬¬xæ¡
+      let yLine = Math.round((y - 15) / 30); // æ¨ªçº¿ç¬¬yæ¡
       if(_this.resultArr[xLine][yLine] !== 0){
         return;
       }
@@ -163,11 +169,12 @@ export default {
       let x = event.offsetX - 70;
       let y = event.offsetY - 70;
       if (x < 15 || x > 435 || y < 15 || y > 435) {
-        // µã³ö½çµÄ
+        // ç‚¹å‡ºç•Œçš„
         return;
       }
-      this.drawChess(x, y);
-      let socketMsg = {x: x,y:y};
+      let xLine = Math.round((x - 15) / 30); // ç«–çº¿ç¬¬xæ¡
+      let yLine = Math.round((y - 15) / 30); // æ¨ªçº¿ç¬¬yæ¡
+      let socketMsg = {x: xLine,y:yLine,id:this.$route.query.userId};
 
       // console.log(JSON.stringify(socketMsg))
       this.webSocket.send(JSON.stringify(socketMsg));
@@ -177,10 +184,10 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style scoped lang="css">
 .gobang {
-  #gobang {
+
     background: #2a4546;
-  }
+
 }
 </style>
