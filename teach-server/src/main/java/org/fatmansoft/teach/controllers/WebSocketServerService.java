@@ -104,7 +104,13 @@ public class WebSocketServerService {
         if((room.isBlack()&&room.getHost().getStudentId()==student.getStudentId())||
                 (!room.isBlack()&&room.getGuest().getStudentId()==student.getStudentId())){
             int x=message.getX(),y=message.getY();
-            room.setChess(x,y);webSocketServerService.roomRepository.save(room);
+            if(room.setChess(x,y)>0){
+                bm.put("type",1);
+                bm.put("msg","此处已有棋子");
+                broadcast(bm.toJSONString());
+                return;
+            }
+            webSocketServerService.roomRepository.save(room);
             bm.put("type",0);
             bm.put("chess",room.getChess());
             bm.put("isBlack",room.isBlack());

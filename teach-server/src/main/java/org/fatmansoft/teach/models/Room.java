@@ -35,15 +35,17 @@ public class Room {
     private String chess=new String(new char[255]).replace("\0","0");//0null 1black 2white
 
 
-    public void setChess(int i,int j,int c){
+    public int setChess(int i,int j,int c){
+        if(chess.charAt(i*15+j)!='0')return 1;//已有棋子
         StringBuilder sb=new StringBuilder(chess);
         sb.setCharAt(i*15+j,(char)(c+'0'));
         chess=new String(sb);
+        return 0;
     }
 
-    public void setChess(int i,int j){
-        if(isBlack())setChess(i,j,1);
-        else setChess(i,j,2);
+    public int setChess(int i,int j){
+        if(isBlack())return setChess(i,j,1);
+        return setChess(i,j,2);
     }
 
     public boolean isBlack(){
