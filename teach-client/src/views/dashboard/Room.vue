@@ -1,12 +1,12 @@
 <template>
   <Navi/>
   <div>
-    <el-tag class="ml-2" >我方棋子：{{isHost?"黑":"白"}}</el-tag>
-    <el-tag class="ml-2" >房号：{{rid}}</el-tag>
-    <el-tag class="ml-2" type="success" v-show="isBlack===isHost">我方行棋</el-tag>
-    <el-tag class="ml-2" type="error" v-show="isBlack!==isHost">对方行棋</el-tag>
-    <el-tag class="ml-2" type="success" v-show="win===1&&isHost||win===2&&!isHost">我方胜利</el-tag>
-    <el-tag class="ml-2" type="error" v-show="((this.win===2&&this.isHost)||(this.win===1&&!this.isHost))&&false">对方胜利</el-tag>
+    <el-tag >我方棋子：{{isHost==="true"?"黑":"白"}}</el-tag>
+    <el-tag >房号：{{rid}}</el-tag>
+    <el-tag type="success" v-show="isBlack.toString()==isHost.toString()">我方行棋</el-tag>
+    <el-tag type="error" v-show="isBlack.toString()!=isHost.toString()">对方行棋</el-tag>
+    <el-tag type="success" v-show="(win===1&&isHost==='true')||(win===2&&isHost==='false')">我方胜利</el-tag>
+    <el-tag type="error" v-show="(this.win===2&&isHost==='true')||(this.win===1&&isHost===false)">对方胜利</el-tag>
   </div>
   <div class="gobang">
     <canvas id="gobang" width="800" height="600"></canvas>
@@ -37,6 +37,8 @@ export default {
     this.isHost=this.$route.query.isHost;
   },
   mounted() {
+    this.rid = this.$route.query.rid;
+    this.isHost=this.$route.query.isHost;
     let _this = this;
     let container = document.getElementById("gobang");
 
@@ -129,10 +131,9 @@ export default {
         _this.resultArr.push(new Array(15).fill(0));
       }
     },
-    drawChess(x, y,isBlack) {
+    drawChess(xLine, yLine,isBlack) {
+      xLine+=1;
       let _this = this;
-      let xLine = Math.round((x - 15) / 30); // 竖线第x条
-      let yLine = Math.round((y - 15) / 30); // 横线第y条
       if(_this.resultArr[xLine][yLine] !== 0){
         return;
       }

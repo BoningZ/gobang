@@ -25,12 +25,7 @@
         <label htmlFor="password2">重复密码</label>&nbsp;
         <el-input style="width: 75%"  clearable placeholder="请输入重复密码" v-model="password2" show-password></el-input>
       </div>
-      <div style="margin-top: 20px" id="register">
-        <el-radio-group v-model="role" size="mini" >
-          <el-radio label="ROLE_USER" border>我是学生</el-radio>
-          <el-radio label="ROLE_ADMIN" border>我是教师</el-radio>
-        </el-radio-group>
-      </div>
+
 
       <div class="form-group"  v-show="(role==='ROLE_USER')">
         <h2></h2>

@@ -125,14 +125,20 @@ public class WebSocketServerService {
         Student student=webSocketServerService.userRepository.findByUserId(id).get().getStudent();
         var bm = new JSONObject();
         bm.put("room",rid);
-        System.out.println((room.getHost().equals(student)));
-        if((room.isBlack()&&room.getHost().equals(student))||(!room.isBlack()&&room.getGuest().equals(student))){
-            if(room.wins()>0){
-                bm.put("type",1);
-                bm.put("msg","本局已结束");
-                broadcast(bm.toJSONString());
-                return;
-            }
+        if(room.getGuest()==null){
+            bm.put("type",1);
+            bm.put("msg","没有客人");
+            broadcast(bm.toJSONString());
+            return;
+        }
+        if(room.wins()>0){
+            bm.put("type",1);
+            bm.put("msg","本局已结束");
+            broadcast(bm.toJSONString());
+            return;
+        }
+        if((room.isBlack()&&room.getHost().getStudentId()==student.getStudentId())||
+                (!room.isBlack()&&room.getGuest().getStudentId()==student.getStudentId())){
             int x=message.getX(),y=message.getY();
             room.setChess(x,y);webSocketServerService.roomRepository.save(room);
             bm.put("type",0);

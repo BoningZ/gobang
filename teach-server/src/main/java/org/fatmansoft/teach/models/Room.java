@@ -63,7 +63,7 @@ public class Room {
             if(j<=11)for(int k=1;brd[i][j+k]==c;k++)if(k==4)return c-'0';
             if(i<=11)for(int k=1;brd[i+k][j]==c;k++)if(k==4)return c-'0';
             if(j<=11&&i<=11)for(int k=1;brd[i+k][j+k]==c;k++)if(k==4)return c-'0';
-            if(j<=11&&i>=5 )for(int k=1;brd[i-k][j+k]!=c;k++)if(k==4)return c-'0';
+            if(j<=11&&i>=5 )for(int k=1;brd[i-k][j+k]==c;k++)if(k==4)return c-'0';
         }
         return 0;
     }

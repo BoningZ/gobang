@@ -31,6 +31,8 @@ public class HomeController {
     @PostMapping("/getRoomList")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public DataResponse getRoomList(@Valid @RequestBody DataRequest dataRequest){
+        Integer idd= CommonMethod.getUserId();
+        Student me=userRepository.findByUserId(idd).get().getStudent();
         Boolean my=dataRequest.getBoolean("my");
         String rid=dataRequest.getString("rid");
         String hostId=dataRequest.getString("hostId");
@@ -39,23 +41,35 @@ public class HomeController {
             Integer id= CommonMethod.getUserId();
             Student student=userRepository.findByUserId(id).get().getStudent();
             List<Room> rList=roomRepository.getRoomByHostOrGuest(student,student);
-            for(Room r:rList)dataList.add(CommonMethod.objectToMap(r));
+            for(Room r:rList){
+                if(r.getGuest()==null) dataList.add(CommonMethod.objectToMap(r));
+                else if(r.getGuest().getStudentId()==me.getStudentId()||r.getHost().getStudentId()==me.getStudentId())dataList.add(CommonMethod.objectToMap(r));
+            }
             return CommonMethod.getReturnData(dataList);
         }
         if(rid!=null&&!rid.equals("")){
             Optional<Room> r=roomRepository.findById(Integer.valueOf(rid));
-            r.ifPresent(room -> dataList.add(CommonMethod.objectToMap(room)));
+            r.ifPresent(room -> {
+                if(room.getGuest()==null) dataList.add(CommonMethod.objectToMap(room));
+                else if(room.getGuest().getStudentId()==me.getStudentId()||room.getHost().getStudentId()==me.getStudentId())dataList.add(CommonMethod.objectToMap(room));
+            });
             return CommonMethod.getReturnData(dataList);
         }
         if(hostId!=null&&!hostId.equals("")){
             Optional<Student> s=studentRepository.findStudentBySid(hostId);
             List<Room> rList=new ArrayList<>();
             s.ifPresent(student -> rList.addAll(roomRepository.getRoomByHost(student)));
-            for(Room r:rList)dataList.add(CommonMethod.objectToMap(r));
+            for(Room r:rList){
+                if(r.getGuest()==null) dataList.add(CommonMethod.objectToMap(r));
+                else if(r.getGuest().getStudentId()==me.getStudentId()||r.getHost().getStudentId()==me.getStudentId())dataList.add(CommonMethod.objectToMap(r));
+            }
             return CommonMethod.getReturnData(dataList);
         }
         List<Room> rList=roomRepository.findAll();
-        for(Room r:rList)dataList.add(CommonMethod.objectToMap(r));
+        for(Room r:rList){
+            if(r.getGuest()==null) dataList.add(CommonMethod.objectToMap(r));
+            else if(r.getGuest().getStudentId()==me.getStudentId()||r.getHost().getStudentId()==me.getStudentId())dataList.add(CommonMethod.objectToMap(r));
+        }
         return CommonMethod.getReturnData(dataList);
     }
 
