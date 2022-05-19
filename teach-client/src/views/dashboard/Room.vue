@@ -6,7 +6,7 @@
     <el-tag type="success" v-show="isBlack.toString()==isHost.toString()">我方行棋</el-tag>
     <el-tag type="error" v-show="isBlack.toString()!=isHost.toString()">对方行棋</el-tag>
     <el-tag type="success" v-show="(win===1&&isHost==='true')||(win===2&&isHost==='false')">我方胜利</el-tag>
-    <el-tag type="error" v-show="(this.win===2&&isHost==='true')||(this.win===1&&isHost===false)">对方胜利</el-tag>
+    <el-tag type="error" v-show="(this.win===2&&isHost==='true')||(this.win===1&&isHost==='false')">对方胜利</el-tag>
   </div>
   <div class="gobang">
     <canvas id="gobang" width="800" height="600"></canvas>
@@ -132,7 +132,6 @@ export default {
       }
     },
     drawChess(xLine, yLine,isBlack) {
-      xLine+=1;
       let _this = this;
       if(_this.resultArr[xLine][yLine] !== 0){
         return;

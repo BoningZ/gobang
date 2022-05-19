@@ -66,15 +66,6 @@ public class ProfileController {
             Student student=user.getStudent();
             student.setSid(dataRequest.getString("sid"));
             student.setName(dataRequest.getString("name"));
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            Date birth=null;
-            Calendar cal=Calendar.getInstance();
-            try {
-                birth=format.parse(dataRequest.getString("birthday"));
-                cal.setTime(birth);
-                cal.add(Calendar.DATE,1);
-                birth=cal.getTime();
-            } catch (ParseException e) {e.printStackTrace();}
             studentRepository.save(student);
         }
         return CommonMethod.getReturnMessageOK();

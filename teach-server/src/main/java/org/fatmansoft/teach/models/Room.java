@@ -37,7 +37,7 @@ public class Room {
 
     public void setChess(int i,int j,int c){
         StringBuilder sb=new StringBuilder(chess);
-        sb.setCharAt((i-1)*15+j,(char)(c+'0'));
+        sb.setCharAt(i*15+j,(char)(c+'0'));
         chess=new String(sb);
     }
 
