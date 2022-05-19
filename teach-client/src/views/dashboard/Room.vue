@@ -48,7 +48,7 @@ export default {
 
     console.log("建立连接")
       if ("WebSocket" in window) {
-        this.webSocket = new WebSocket("ws://81.68.176.199:9090/room/" + this.rid)
+        this.webSocket = new WebSocket("ws://localhost:9090/room/" + this.rid)
       } else {
         ElMessage({
           showClose: true,
