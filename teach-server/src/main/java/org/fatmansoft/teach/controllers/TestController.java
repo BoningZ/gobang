@@ -73,19 +73,11 @@ public class TestController {
         m.put("title","修改密码");
         mList.add(m);
 
+        m=new HashMap();
+        m.put("name","StudentProfile");
+        m.put("title","个人资料");
+        mList.add(m);
 
-        if(user.getUserType().getName()== EUserType.ROLE_ADMIN) {
-
-            m = new HashMap();
-            m.put("name", "TeacherProfile");
-            m.put("title", "个人资料");
-            mList.add(m);
-        }else{
-            m=new HashMap();
-            m.put("name","StudentProfile");
-            m.put("title","个人资料");
-            mList.add(m);
-        }
         return CommonMethod.getReturnData(mList);
     }
 

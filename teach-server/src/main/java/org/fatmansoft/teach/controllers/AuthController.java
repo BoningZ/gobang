@@ -12,7 +12,6 @@ import org.fatmansoft.teach.models.*;
 import org.fatmansoft.teach.payload.request.DataRequest;
 import org.fatmansoft.teach.payload.response.DataResponse;
 import org.fatmansoft.teach.repository.StudentRepository;
-import org.fatmansoft.teach.repository.TeacherRepository;
 import org.fatmansoft.teach.repository.UserTypeRepository;
 import org.fatmansoft.teach.util.CommonMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +50,6 @@ public class AuthController {
     @Autowired
     StudentRepository studentRepository;
 
-    @Autowired
-    TeacherRepository teacherRepository;
 
     @Autowired
     UserTypeRepository userTypeRepository;
@@ -110,25 +107,13 @@ public class AuthController {
             UserType userRole = userTypeRepository.findByName(EUserType.valueOf(strRoles));
             user.setUserType(userRole);
         }
-        switch (user.getUserType().getName()){
-            case ROLE_USER:
-                if(studentRepository.existsBySid(signUpRequest.getString("sid")))return CommonMethod.getReturnMessageError("该学号已被注册！");
-                Student student=new Student();
-                student.setName(signUpRequest.getString("name"));
-                student.setSid(signUpRequest.getString("sid"));
-                studentRepository.save(student);
-                user.setStudent(student);
-                break;
-            case ROLE_ADMIN:
-                if(teacherRepository.existsByTid(signUpRequest.getString("tid")))return CommonMethod.getReturnMessageError("该工号已被注册！");
-                if(!signUpRequest.getString("check").equals("202022300310"))return CommonMethod.getReturnMessageError("校验密码错误！");
-                Teacher teacher=new Teacher();
-                teacher.setName(signUpRequest.getString("name"));
-                teacher.setTid(signUpRequest.getString("tid"));
-                teacherRepository.save(teacher);
-                user.setTeacher(teacher);
-                break;
-        }
+
+        if(studentRepository.existsBySid(signUpRequest.getString("sid")))return CommonMethod.getReturnMessageError("该学号已被注册！");
+        Student student=new Student();
+        student.setName(signUpRequest.getString("name"));
+        student.setSid(signUpRequest.getString("sid"));
+        studentRepository.save(student);
+        user.setStudent(student);
 
 
         userRepository.save(user);

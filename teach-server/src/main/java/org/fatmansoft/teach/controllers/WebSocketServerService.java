@@ -10,8 +10,6 @@ import org.fatmansoft.teach.models.Student;
 import org.fatmansoft.teach.repository.RoomRepository;
 import org.fatmansoft.teach.repository.StudentRepository;
 import org.fatmansoft.teach.repository.UserRepository;
-import org.fatmansoft.teach.util.BeanUtils;
-import org.fatmansoft.teach.util.CommonMethod;
 import org.fatmansoft.teach.util.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,24 +20,9 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-/**
- * webSocketServer服务
- * <p>
- * //TODO
- * WebSocketServerService.java
- * </p>
- *
- * @author 佐斯特勒
- * @version v1.0.0
- * @date 2020/6/29 21:03
- * @see WebSocketServerService
- **/
+
 @EqualsAndHashCode
 @Service
 @ServerEndpoint("/room/{rid}")
@@ -51,16 +34,7 @@ public class WebSocketServerService {
     private Session session;
     private static CopyOnWriteArraySet<WebSocketServerService> webSocketSet = new CopyOnWriteArraySet<>();
 
-    /**
-     * 与某个客户端的连接会话，需要通过它来给客户端发送数据
-     * 用来记录用户名和该session进行绑定
-     */
-    private static Map<String, Session> map = new ConcurrentHashMap<>();
 
-    /**
-     * 记录用户 session_id:nickName
-     */
-    private static Map<String,String> peoples = new ConcurrentHashMap<>();
 
     @Autowired
     private UserRepository userRepository;
@@ -79,19 +53,12 @@ public class WebSocketServerService {
     }
 
 
-    /**
-     * 建立会话
-     *
-     * @param session  会话
-     * @param rid 房间号
-     */
+
     @OnOpen
     public void onOpen(Session session, @PathParam("rid") String rid) {
         var msg = new JSONObject();
         this.session = session;
         this.rid=rid;
-        peoples.put(session.getId(), rid);
-        map.put(session.getId(), session);
         webSocketSet.add(this);
         Room room=webSocketServerService.roomRepository.getById(Integer.valueOf(rid));
         msg.put("type", 0);
@@ -102,12 +69,9 @@ public class WebSocketServerService {
         broadcast(msg.toJSONString());
     }
 
-    /**
-     * 关闭连接
-     */
+
     @OnClose
     public void onClose() throws IOException {
-        peoples.remove(this.session.getId());
         var msg = new JSONObject();
         msg.put("type", 1);
         msg.put("room",rid);
@@ -153,18 +117,14 @@ public class WebSocketServerService {
         broadcast(bm.toJSONString());
     }
 
-    /**
-     * 发生错误时调用   
-     */
+
     @OnError
     public void onError(Session session, Throwable error) {
         log.error("发生错误,用户：{}，发生错误", session.getId());
         error.printStackTrace();
     }
 
-    /**
-     * 群发自定义消息
-     */
+
     public void broadcast(String message) {
         webSocketSet.forEach(item -> {
             try {

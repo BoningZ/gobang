@@ -2,12 +2,10 @@ package org.fatmansoft.teach.controllers;
 
 import org.fatmansoft.teach.models.EUserType;
 import org.fatmansoft.teach.models.Student;
-import org.fatmansoft.teach.models.Teacher;
 import org.fatmansoft.teach.models.User;
 import org.fatmansoft.teach.payload.request.DataRequest;
 import org.fatmansoft.teach.payload.response.DataResponse;
 import org.fatmansoft.teach.repository.StudentRepository;
-import org.fatmansoft.teach.repository.TeacherRepository;
 import org.fatmansoft.teach.repository.UserRepository;
 import org.fatmansoft.teach.util.CommonMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +24,6 @@ public class ProfileController {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    TeacherRepository teacherRepository;
-    @Autowired
     StudentRepository studentRepository;
 
     @PostMapping("/getProfile")
@@ -38,15 +34,10 @@ public class ProfileController {
         Optional<User> tmp = userRepository.findByUserId(userId);
         user = tmp.get();
         Map m=new HashMap();
-        if(user.getUserType().getName()== EUserType.ROLE_ADMIN){
-            Teacher teacher=user.getTeacher();
-            m.put("tid",teacher.getTid());
-            m.put("name",teacher.getName());
-        }else{
-            Student student=user.getStudent();
-            m.put("sid",student.getSid());
-            m.put("name",student.getName());
-        }
+        Student student=user.getStudent();
+        m.put("sid",student.getSid());
+        m.put("name",student.getName());
+
         return CommonMethod.getReturnData(m);
     }
 
@@ -57,17 +48,12 @@ public class ProfileController {
         User user;
         Optional<User> tmp = userRepository.findByUserId(userId);
         user = tmp.get();
-        if(user.getUserType().getName()== EUserType.ROLE_ADMIN){
-            Teacher teacher=user.getTeacher();
-            teacher.setTid(dataRequest.getString("tid"));
-            teacher.setName(dataRequest.getString("name"));
-            teacherRepository.save(teacher);
-        }else{
-            Student student=user.getStudent();
-            student.setSid(dataRequest.getString("sid"));
-            student.setName(dataRequest.getString("name"));
-            studentRepository.save(student);
-        }
+
+        Student student=user.getStudent();
+        student.setSid(dataRequest.getString("sid"));
+        student.setName(dataRequest.getString("name"));
+        studentRepository.save(student);
+
         return CommonMethod.getReturnMessageOK();
     }
 

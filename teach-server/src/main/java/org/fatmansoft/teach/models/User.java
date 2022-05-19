@@ -12,7 +12,6 @@ import java.util.Date;
 @Table(	name = "user",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "userName"),
-                @UniqueConstraint(columnNames = "teacherId"),
                 @UniqueConstraint(columnNames = "studentId")
         })
 public class User {
@@ -28,9 +27,7 @@ public class User {
     @JoinColumn(name="studentId")
     private Student student;
 
-    @ManyToOne
-    @JoinColumn(name="teacherId")
-    private Teacher teacher;
+
 
     @NotBlank
     @Size(max = 20)
@@ -107,14 +104,6 @@ public class User {
 
     public void setStudent(Student student) {
         this.student = student;
-    }
-
-    public Teacher getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
     }
 
 

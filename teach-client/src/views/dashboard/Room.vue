@@ -27,9 +27,6 @@ export default {
       isBlack:false,
       win:0,
       ctx: null,
-      winGame: false,
-      whiteTurn: false, // 白棋轮；true-黑棋轮
-      resultArr: [] // 记录棋子位置的数组
     };
   },
   created() {
@@ -95,11 +92,6 @@ export default {
       }
 
   },
-  computed:{
-    chessText(){
-      return this.whiteTurn ? '白棋' : '黑棋';
-    }
-  },
   methods: {
     redraw(){
       var k=0;
@@ -128,14 +120,11 @@ export default {
         _this.ctx.lineTo(435, 15 + i * 30);
         _this.ctx.stroke();
 
-        _this.resultArr.push(new Array(15).fill(0));
+
       }
     },
     drawChess(xLine, yLine,isBlack) {
       let _this = this;
-      if(_this.resultArr[xLine][yLine] !== 0){
-        return;
-      }
       let grd = _this.ctx.createRadialGradient(
           xLine * 30 + 15,
           yLine * 30 + 15,

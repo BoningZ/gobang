@@ -33,17 +33,7 @@
         <el-input style="width: 75%" clearable v-model="sid"  name="sid" placeholder="请输入学号"></el-input>
       </div>
 
-      <div class="form-group"  v-show="(role==='ROLE_ADMIN')">
-        <h2></h2>
-        <el-label for="username">工号</el-label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <el-input style="width: 75%" clearable v-model="tid"  name="tid" placeholder="请输入工号"></el-input>
-      </div>
 
-      <div class="form-group"  v-show="(role==='ROLE_ADMIN')">
-        <h2></h2>
-        <el-label for="username">校验密码</el-label>&nbsp;
-        <el-input style="width: 75%" clearable v-model="check"  name="check" placeholder="请输入校验密码"></el-input>
-      </div>
 
       <div style="margin-top: 20px" class="form-group">
         <h2></h2>
@@ -67,9 +57,7 @@ export default {
       password2:'',
       sid:'',
       name:'',
-      tid:'',
       role:'ROLE_USER',
-      check:'',
     }
   },
   methods: {
@@ -79,15 +67,14 @@ export default {
           message:  '口令不一致！',
           type: 'warning',
         })
-      }if((this.role==='ROLE_USER'&&(!this.name||!this.sid||!this.username||!this.password))||
-          (this.role==='ROLE_ADMIN'&&(!this.name||!this.tid||!this.username||!this.password||!this.check))){
+      }if(this.role==='ROLE_USER'&&(!this.name||!this.sid||!this.username||!this.password)){
         this.$message({
           message:  '所有项目均为必填项！',
           type: 'warning',
         })
       }
         else{
-        register({'username':this.username,'password':this.password,'role':this.role,'sid':this.sid,'tid':this.tid,'name':this.name,'check':this.check}).then(response=>{
+        register({'username':this.username,'password':this.password,'role':this.role,'sid':this.sid,'name':this.name}).then(response=>{
           if (response.code === '0') {
             this.$message({
               message:  '成功，跳转到登录页面',
