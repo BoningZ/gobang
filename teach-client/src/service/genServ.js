@@ -33,9 +33,7 @@ function register(data){
     return generalRequest('/api/auth/signup',data)
 }
 
-function courseSubmit(data) {
-    return generalRequest('/api/teach/courseSubmit', data)
-}
+
 function getProfile(data){
     return generalRequest('/api/teach/getProfile',data);
 }
@@ -64,7 +62,6 @@ export {
     getMenuList,
     changePassword,
     register,
-    courseSubmit,
     getProfile,
     submitProfile,
     getRoomList,
